@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MetricType {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  units Unit[]
+
+  @@map("metric_types")
+}
+
+model Unit {
+  id                 Int        @id @default(autoincrement())
+  name               String
+  symbol             String     @unique
+  conversionToBase   String     @map("conversion_to_base")
+  conversionFromBase String     @map("conversion_from_base")
+  metricTypeId       Int        @map("metric_type_id")
+  metricType         MetricType @relation(fields: [metricTypeId], references: [id])
+
+  entries MetricEntry[]
+
+  @@map("units")
+}
+
+model MetricEntry {
+  id        Int      @id @default(autoincrement())
+  value     Decimal
+  date      DateTime @map("date")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  unitId    Int      @map("unit_id")
+  unit      Unit     @relation(fields: [unitId], references: [id])
+  createdBy String   @map("created_by")
+
+  @@map("metric_entries")
+}
