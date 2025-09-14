@@ -7,7 +7,11 @@ import {
 import { WinstonLogger } from '../../../core/logger/logger.service';
 import { PrismaService } from '../../../core/database/prisma.service';
 import { CreateMetricDto } from '../dtos/create-metric.dto';
-import { GetChartDto, GetMetricDto } from '../dtos/get-metric.dto';
+import {
+  GetChartDto,
+  GetMetricDto,
+  GetUnitByType,
+} from '../dtos/get-metric.dto';
 import { MetricErrorMessage } from '../../../common/enums/error.enum';
 import { PageOptionsDto } from '../../../common/pagination/page-option-dto';
 import { calcSkip } from '../../../common/pagination/calc-skip';
@@ -114,7 +118,7 @@ export class MetricService {
       }
 
       if (fromUnit.metricTypeId !== toUnit.metricTypeId) {
-        throw new BadRequestException(MetricErrorMessage.UNIT_INVALID);
+        throw new BadRequestException(MetricErrorMessage.TARGET_UNIT_INVALID);
       }
 
       if (fromUnit.symbol === toUnit.symbol) {
@@ -231,8 +235,20 @@ export class MetricService {
     }
   }
 
-  async getUnits() {
-    return await this.prisma.unit.findMany();
+  async getUnits(getUnitByType: GetUnitByType) {
+    try {
+      const whereQuery: Prisma.UnitWhereInput = {};
+      if (getUnitByType.type) {
+        whereQuery.metricTypeId = +getUnitByType.type;
+      }
+
+      return this.prisma.unit.findMany({
+        where: whereQuery,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   async getMetricsTypes() {

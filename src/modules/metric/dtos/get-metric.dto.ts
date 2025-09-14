@@ -26,6 +26,16 @@ export class GetMetricDto {
   userId: string;
 }
 
+export class GetUnitByType {
+  @IsOptional()
+  @ApiProperty({
+    type: Number,
+    required: false,
+    default: 1,
+  })
+  type: number;
+}
+
 export class GetChartDto extends GetMetricDto {
   @IsNotEmpty()
   @IsDateString()
@@ -51,4 +61,24 @@ export class GetChartDto extends GetMetricDto {
     default: 1,
   })
   toUnitId: number;
+}
+
+export class ConvertMetricDto {
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty({
+    type: Number,
+    required: true,
+    default: 10,
+  })
+  unitId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty({
+    type: Number,
+    required: true,
+    default: 10,
+  })
+  entryId: number;
 }

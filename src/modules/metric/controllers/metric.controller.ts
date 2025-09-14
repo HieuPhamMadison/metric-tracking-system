@@ -1,7 +1,12 @@
 import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { MetricService } from '../services/metric.service';
 import { CreateMetricDto } from '../dtos/create-metric.dto';
-import { GetChartDto, GetMetricDto } from '../dtos/get-metric.dto';
+import {
+  ConvertMetricDto,
+  GetChartDto,
+  GetMetricDto,
+  GetUnitByType,
+} from '../dtos/get-metric.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PageOptionsDto } from '../../../common/pagination/page-option-dto';
 import { httpResponse } from '../../../common/interceptors/response';
@@ -36,8 +41,8 @@ export class MetricController {
   }
 
   @Get('units')
-  async getUnits() {
-    const res = await this.metricService.getUnits();
+  async getUnits(@Query() getUnitByType: GetUnitByType) {
+    const res = await this.metricService.getUnits(getUnitByType);
     return httpResponse({ success: true, data: res });
   }
 
@@ -45,5 +50,14 @@ export class MetricController {
   async getMetricsTypes() {
     const res = await this.metricService.getMetricsTypes();
     return httpResponse({ success: true, data: res });
+  }
+
+  @Post('convert')
+  async convertUnit(@Body() convertMetricDto: ConvertMetricDto) {
+    const data = await this.metricService.convertUnit(
+      convertMetricDto.entryId,
+      convertMetricDto.unitId,
+    );
+    return httpResponse({ success: true, data });
   }
 }
