@@ -99,6 +99,13 @@ This project is a scalable metric tracking system that allows users to create, r
 
 ## Running the Application
 
+### Option 1: Using Docker (Recommended)
+```bash
+# Run with Docker Compose (PostgreSQL + Application)
+docker-compose up --build
+```
+
+### Option 2: Local Development
 ```bash
 # Development mode
 npm run start:dev
@@ -122,17 +129,23 @@ The Swagger interface provides interactive documentation for all available endpo
 
 ### Docker Commands
 ```bash
-# Start all services (recommended)
+# Start all services (production)
 docker-compose up --build
+
+# Start development environment with auto-reload
+docker-compose -f docker-compose.dev.yml up --build
 
 # Start in background
 docker-compose up -d --build
+docker-compose -f docker-compose.dev.yml up -d --build
 
 # Stop all services
 docker-compose down
+docker-compose -f docker-compose.dev.yml down
 
 # View logs
 docker-compose logs -f
+docker-compose -f docker-compose.dev.yml logs -f
 
 # Rebuild and restart
 docker-compose down && docker-compose up --build
