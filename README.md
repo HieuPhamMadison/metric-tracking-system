@@ -40,33 +40,7 @@ This project is a scalable metric tracking system that allows users to create, r
    - Application: http://localhost:3000
    - Swagger API Documentation: http://localhost:3000/docs
 
-### Option 2: Development with Docker (Database only)
-
-1. **Start only PostgreSQL with Docker**
-   ```bash
-   # Start only the database
-   docker-compose up postgres -d
-   ```
-
-2. **Run application locally**
-   ```bash
-   # Copy environment file
-   cp .env.example .env
-   
-   # Install dependencies
-   npm install
-   
-   # Run migrations
-   npm run migrate:dev
-   
-   # Seed database
-   npm run seed
-   
-   # Start development server
-   npm run start:dev
-   ```
-
-### Option 3: Local Development (Without Docker)
+### Option 2: Local Development (Without Docker)
 
 1. **Clone the repository**
    ```bash
@@ -109,12 +83,6 @@ docker-compose up --build
 ```bash
 # Development mode
 npm run start:dev
-
-# Production mode
-npm run start:prod
-
-# Watch mode
-npm run start
 ```
 
 ## API Documentation
@@ -129,26 +97,8 @@ The Swagger interface provides interactive documentation for all available endpo
 
 ### Docker Commands
 ```bash
-# Start all services (production)
+# Start all services 
 docker-compose up --build
-
-# Start development environment with auto-reload
-docker-compose -f docker-compose.dev.yml up --build
-
-# Start in background
-docker-compose up -d --build
-docker-compose -f docker-compose.dev.yml up -d --build
-
-# Stop all services
-docker-compose down
-docker-compose -f docker-compose.dev.yml down
-
-# View logs
-docker-compose logs -f
-docker-compose -f docker-compose.dev.yml logs -f
-
-# Rebuild and restart
-docker-compose down && docker-compose up --build
 ```
 
 ### NPM Scripts
@@ -168,14 +118,6 @@ npm run migrate:dev
 # Seed database with initial data
 npm run seed
 
-# Run unit tests
-npm run test
-
-# Run e2e tests
-npm run test:e2e
-
-# Run test coverage
-npm run test:cov
 ```
 
 ## Project Structure
