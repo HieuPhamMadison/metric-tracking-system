@@ -1,0 +1,63 @@
+# Development docker-compose for easier development
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: metric-postgres-dev
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: MetricSystem
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - metric-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Development environment (optional - for running just the database)
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metric-app-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:1234@postgres:5432/MetricSystem
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - metric-network
+    command: >
+      sh -c "
+        echo 'Waiting for database to be ready...' &&
+        sleep 5 &&
+        echo 'Running database migrations...' &&
+        npx prisma migrate dev --name migrate &&
+        echo 'Seeding database...' &&
+        npm run seed &&
+        echo 'Starting development server...' &&
+        npm run start:dev
+      "
+
+volumes:
+  postgres_dev_data:
+
+networks:
+  metric-network:
+    driver: bridge
